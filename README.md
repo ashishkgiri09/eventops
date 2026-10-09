@@ -36,6 +36,14 @@ npm run start
 
 Visit **[http://localhost:3000](http://localhost:3000)** in your browser.
 
+## Deploy a preview on Render
+
+The repository includes a `render.yaml` Blueprint for the Next.js frontend, FastAPI backend, and PostgreSQL database. In Render, choose **New → Blueprint**, connect `ashishkgiri09/eventops`, and deploy the Blueprint. It builds both web services from `main` and connects the frontend to the API.
+
+This default preview uses Render's free services. Free web services can sleep while idle, and the included free PostgreSQL database expires after 30 days. Upgrade the database before storing real event registrations or relying on it long term. The hosted database starts empty; local SQLite data is not uploaded. After deployment, verify the API at `/health` and create or register the event again in the hosted app.
+
+Every push to the connected `main` branch can trigger an automatic redeploy. The production deployment is separate from the local development server.
+
 ---
 
 ## ⚙️ Environment Variables & Backend Integration

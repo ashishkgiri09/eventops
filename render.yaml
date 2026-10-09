@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: eventops-api
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: eventops-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        value: https://eventops-web.onrender.com
+
+  - type: web
+    name: eventops-web
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /login
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://eventops-api.onrender.com
+      - key: NEXT_PUBLIC_USE_MOCK_API
+        value: "false"
+
+databases:
+  # Free Render Postgres expires after 30 days. Upgrade before using this
+  # deployment for real event registrations or other long-term records.
+  - name: eventops-db
+    databaseName: eventops
+    user: eventops
+    plan: free
+    region: singapore
